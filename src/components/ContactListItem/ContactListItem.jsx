@@ -4,7 +4,7 @@ import {
   DeleteItemBtn,
 } from 'components/ContactListItem/ContactListItem.styled';
 
-function ContactListItem({ name, number, onContactDelete }) {
+const ContactListItem = ({ name, number, onContactDelete }) => {
   return (
     <ContactItem>
       <ContactText>
@@ -15,6 +15,6 @@ function ContactListItem({ name, number, onContactDelete }) {
       </DeleteItemBtn>
     </ContactItem>
   );
-}
+};
 
 export default ContactListItem;
