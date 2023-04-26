@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import { Container, Title, SubTitle } from 'components/App/App.styled';
 import { ContactForm, ContactList, React, Filter } from 'components/App/index';
 
-function App() {
+const App = () => {
   const [contacts, setContacts] = useState([
     { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
     { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
@@ -74,6 +74,6 @@ function App() {
       />
     </Container>
   );
-}
+};
 
 export default App;
