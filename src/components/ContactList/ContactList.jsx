@@ -1,44 +1,31 @@
 import PropTypes from 'prop-types';
-import ContactListItem from 'components/ContactListItem/ContactListItem';
-import {
-  ContactListContainer,
-  ContactsList,
-  ContactNotification,
-} from 'components/ContactList/ContactList.styled';
 
-const ContactList = ({ contacts, getFilteredContacts, onContactDelete }) => {
+import { Contact, Notification } from 'components';
+
+import { Wrapper, List, Item } from './ContactList.styled';
+
+const ContactList = ({ onDeleteContact, getFilteredContacts }) => {
   const filteredContacts = getFilteredContacts();
-
   return (
-    <ContactListContainer>
-      {contacts.length !== 0 ? (
-        <ContactsList>
-          {filteredContacts.map(({ id, name, number }) => (
-            <ContactListItem
-              key={id}
-              name={name}
-              number={number}
-              onContactDelete={() => onContactDelete(id)}
-            />
+    <Wrapper>
+      {filteredContacts.length !== 0
+        ? <List>
+            {filteredContacts.map(({id, name, number}) => (
+              <Item key={id}>
+                <Contact
+                  name={name}
+                  number={number}
+                  onDeleteContact={()=>onDeleteContact(id)}
+                />
+              </Item>              
           ))}
-        </ContactsList>
-      ) : (
-        <ContactNotification>
-          You don't have any contacts in your phonebook
-        </ContactNotification>
-      )}
-    </ContactListContainer>
-  );
-};
+          </List>
+        : <Notification message="No search results found"/>}
+    </Wrapper>   
+  )
+}
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ).isRequired,
+ContactList.propTypes = {  
   getFilteredContacts: PropTypes.func.isRequired,
   onDeleteContact: PropTypes.func,
 };

@@ -1,60 +1,66 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Label, FormBtn } from './ContactForm.styled';
+import { Formik, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+
+import { FormWrapper, Label, FieldInput, Btn, ErrMsg } from './ContactForm.styled'
 
 const ContactForm = ({ onSubmit }) => {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const initialValues = { name: '', number: '' }
 
-  const resetForm = () => {
-    setName('');
-    setNumber('');
-  };
+  const AddContactSchema = Yup.object().shape({
+    name: Yup.string()
+     .min(8, 'Too Short! The name must be at least 8 characters long.')
+     .max(32, 'Too Long! The name must be no more than 32 characters.' )
+     .required('*Name is a required field'),    
+    number: Yup
+      .string()
+      .matches(
+        /^\+38-\d{3}-\d{3}-\d{2}-\d{2}$/,
+        '*Incorrect format. Insert +38-000-000-00-00'
+      )
+      .required('*Phone number is a required field'),
+  });
 
-  const onHandleSubmit = e => {
-    e.preventDefault();
-    onSubmit({ name, number });
+  const handleSubmit = (values, { resetForm }) => {
+    onSubmit(values);
     resetForm();
   };
-
-  const onInputChange = e => {
-    const { name, value } = e.currentTarget;
-    name === 'name' ? setName(value) : setNumber(value);
-  };
-
+  
   return (
-    <Form onSubmit={onHandleSubmit}>
-      <Label>
-        Name
-        <input
-          onChange={onInputChange}
-          value={name}
-          type="text"
-          name="name"
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          required
-        />
-      </Label>
-      <Label>
-        Number
-        <input
-          onChange={onInputChange}
-          value={number}
-          type="tel"
-          name="number"
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          required
-        />
-      </Label>
-      <FormBtn type="submit">Add Contact</FormBtn>
-    </Form>
-  );
-};
+    <Formik
+      initialValues={initialValues}
+      validationSchema={AddContactSchema}
+      onSubmit={handleSubmit}
+    >
+      <FormWrapper noValidate>
+        <Label>
+          Name
+          <FieldInput
+            type="text"
+            name="name"
+            required
+            placeholder="First and last name"
+          />
+          <ErrorMessage component={ErrMsg} name="name" />
+        </Label>
+        <Label>
+          Number
+          <FieldInput
+            type="tel"
+            name="number"
+            required
+            placeholder="+38-012-345-67-89"
+          />
+          <ErrorMessage component={ErrMsg} name="number" />
+        </Label>
+      <Btn type="submit">Add contact</Btn>
+      </FormWrapper>
+    </Formik>
+  )
+}
 
 ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func,
 };
 
 export default ContactForm;
